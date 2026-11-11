@@ -7,7 +7,9 @@ import (
 	"github.com/SandroS22/chi-test/cmd/config"
 	"github.com/SandroS22/chi-test/cmd/handler"
 	"github.com/SandroS22/chi-test/db"
+	"github.com/SandroS22/chi-test/repository"
 	"github.com/SandroS22/chi-test/router"
+	"github.com/SandroS22/chi-test/service"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -35,8 +37,13 @@ func registerUserRoutes(r *chi.Mux, db *sql.DB) {
 	userHandler := createHandler(db)
 	router.AddRoute(r, "POST", "/users", userHandler.CreateUser)
 	router.AddRoute(r, "GET", "/users", userHandler.GetAllUsers)
+	router.AddRoute(r, "GET", "/users/{id}", userHandler.GetUserByID)
+	router.AddRoute(r, "PUT", "/users/{id}", userHandler.UpdateUser)
+	router.AddRoute(r, "DELETE", "/users/{id}", userHandler.DeleteUser)
 }
 
 func createHandler(db *sql.DB) *handler.UserHandler {
-	return &handler.UserHandler{DB: db}
+	userRepo := repository.NewUserRepository(db)
+	userService := service.NewUserService(userRepo)
+	return handler.NewUserHandler(userService)
 }

@@ -101,6 +101,11 @@ func GetAllUsers(db *sql.DB) ([]User, error) {
 
 // UpdateUser updates an existing user record.
 func UpdateUser(db *sql.DB, u User) error {
+	if u.Password != "" {
+		query := `UPDATE users SET name = ?, user = ?, password = ?, role = ? WHERE id = ?`
+		_, err := db.Exec(query, u.Name, u.User, u.Password, u.Role, u.ID)
+		return err
+	}
 	query := `UPDATE users SET name = ?, user = ?, role = ? WHERE id = ?`
 	_, err := db.Exec(query, u.Name, u.User, u.Role, u.ID)
 	return err

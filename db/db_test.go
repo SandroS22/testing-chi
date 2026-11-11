@@ -28,7 +28,7 @@ func TestInsertAndGetUser(t *testing.T) {
 	database := setupTestDB(t)
 	defer database.Close()
 
-	id, err := InsertUser(database, "John Doe", "johndoe", "admin")
+	id, err := InsertUser(database, "John Doe", "johndoe", "password123", "admin")
 	if err != nil {
 		t.Fatalf("failed to insert user: %v", err)
 	}
@@ -51,12 +51,12 @@ func TestGetAllUsers(t *testing.T) {
 	database := setupTestDB(t)
 	defer database.Close()
 
-	_, err := InsertUser(database, "User One", "user1", "member")
+	_, err := InsertUser(database, "User One", "user1", "password1", "member")
 	if err != nil {
 		t.Fatalf("failed to insert user 1: %v", err)
 	}
 
-	_, err = InsertUser(database, "User Two", "user2", "admin")
+	_, err = InsertUser(database, "User Two", "user2", "password2", "admin")
 	if err != nil {
 		t.Fatalf("failed to insert user 2: %v", err)
 	}
@@ -79,7 +79,7 @@ func TestUpdateUser(t *testing.T) {
 	database := setupTestDB(t)
 	defer database.Close()
 
-	id, err := InsertUser(database, "Original Name", "orig", "viewer")
+	id, err := InsertUser(database, "Original Name", "orig", "password", "viewer")
 	if err != nil {
 		t.Fatalf("failed to insert user: %v", err)
 	}
@@ -108,7 +108,7 @@ func TestDeleteUser(t *testing.T) {
 	database := setupTestDB(t)
 	defer database.Close()
 
-	id, err := InsertUser(database, "To Delete", "delete_me", "guest")
+	id, err := InsertUser(database, "To Delete", "delete_me", "password", "guest")
 	if err != nil {
 		t.Fatalf("failed to insert user: %v", err)
 	}
