@@ -34,16 +34,27 @@ func registerRoutes(r *chi.Mux) {
 }
 
 func registerUserRoutes(r *chi.Mux, db *sql.DB) {
-	userHandler := createHandler(db)
+	userHandler := createUserHandler(db)
+	authHandler := createAuthHandler(db)
 	router.AddRoute(r, "POST", "/users", userHandler.CreateUser)
 	router.AddRoute(r, "GET", "/users", userHandler.GetAllUsers)
 	router.AddRoute(r, "GET", "/users/{id}", userHandler.GetUserByID)
 	router.AddRoute(r, "PUT", "/users/{id}", userHandler.UpdateUser)
 	router.AddRoute(r, "DELETE", "/users/{id}", userHandler.DeleteUser)
+	router.AddRoute(r, "POST", "/login", authHandler.Login)
 }
 
-func createHandler(db *sql.DB) *handler.UserHandler {
+func createUserHandler(db *sql.DB) *handler.UserHandler {
 	userRepo := repository.NewUserRepository(db)
 	userService := service.NewUserService(userRepo)
 	return handler.NewUserHandler(userService)
+}
+
+func createAuthHandler(db *sql.DB) *handler.AuthHandler {
+	authRepo := repository.NewUserRepository(db)
+	authService := service.NewAuthService(authRepo)
+	return &handler.AuthHandler{
+		DB:      db,
+		Service: authService,
+	}
 }

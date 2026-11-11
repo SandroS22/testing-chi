@@ -17,6 +17,7 @@ type UserRepository interface {
 	GetAll() ([]db.User, error)
 	Update(user *db.User) error
 	Delete(id int) error
+	GetByUsername(username string) (*db.User, error)
 }
 
 type userRepository struct {
@@ -67,4 +68,15 @@ func (r *userRepository) Delete(id int) error {
 		return err
 	}
 	return db.DeleteUser(r.db, id)
+}
+
+func (r *userRepository) GetByUsername(username string) (*db.User, error) {
+	user, err := db.GetUserByUsername(r.db, username)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrUserNotFound
+		}
+		return nil, err
+	}
+	return user, nil
 }

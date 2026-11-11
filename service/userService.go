@@ -22,6 +22,7 @@ type UserService interface {
 	GetAllUsers() ([]response.UserResponse, error)
 	UpdateUser(id int, req request.UpdateUserRequest) (*response.UserResponse, error)
 	DeleteUser(id int) error
+	GetUserByUsername(username string) (*response.UserResponse, error)
 }
 
 type userService struct {
@@ -146,4 +147,16 @@ func (s *userService) DeleteUser(id int) error {
 		return err
 	}
 	return nil
+}
+
+func (s *userService) GetUserByUsername(username string) (*response.UserResponse, error) {
+	user, err := s.repo.GetByUsername(username)
+	if err != nil {
+		if errors.Is(err, repository.ErrUserNotFound) || errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrUserNotFound
+		}
+		return nil, err
+	}
+
+	return response.NewUserResponse(user.ID, user.Name, user.User, user.Role), nil
 }

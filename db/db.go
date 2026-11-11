@@ -117,3 +117,16 @@ func DeleteUser(db *sql.DB, id int) error {
 	_, err := db.Exec(query, id)
 	return err
 }
+
+func GetUserByUsername(db *sql.DB, username string) (*User, error) {
+	query := `SELECT id, name, user, password, role FROM users WHERE user = ?`
+	row := db.QueryRow(query, username)
+
+	var u User
+	err := row.Scan(&u.ID, &u.Name, &u.User, &u.Password, &u.Role)
+	if err != nil {
+		return nil, err
+	}
+
+	return &u, nil
+}
